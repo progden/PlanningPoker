@@ -1,14 +1,34 @@
-<app-card set="0"></app-card>
-<app-card set="0.5"></app-card>
-<app-card set="1"></app-card>
-<app-card set="2"></app-card>
-<app-card color="blue" set="3"></app-card>
-<app-card color="blue" set="5"></app-card>
-<app-card color="blue" set="8"></app-card>
-<app-card color="blue" set="13"></app-card>
-<app-card color="purple" set="20"></app-card>
-<app-card color="purple" set="40"></app-card>
-<app-card color="purple" set="Q"></app-card>
-<app-card color="purple" set="100"></app-card>
-<app-card color="#223342" set="coffee"></app-card>
-<app-card color="#223342" set="inf"></app-card>
+<h4>規劃遊戲</h4>
+<ul>
+  <li>Game 1</li>
+  <li>Game 2 <button>Join</button></li>
+  <li>Game 3 <button>Join</button></li>
+</ul>
+<h4>參加人員</h4>
+<ul>
+  <li *ngFor="let item of player">
+    <button>踢出</button> {{item.name}}<span *ngIf="item.pick == 'not-yet'">(選擇中)</span>
+  </li>
+  <li><button>離開</button> 你<input value="測試人員 "/><span *ngIf="pick == ''">(選擇中)</span></li>
+</ul>
+<h4>結果是?!?!</h4>
+<span *ngFor="let item of player">
+  <div *ngIf="item.pick != 'not-yet'" style="display: inline-block">
+    <app-card color="{{item.color}}" set="{{item.pick}}"></app-card>
+    {{item.name}}
+  </div>
+</span>
+<div *ngIf="pick" style="display: inline-block;">
+  <app-card  set="{{pick}}"></app-card>
+  你(測試人員) <button (click)="DoCancel()">收回</button>
+</div>
+<div *ngIf="!pick">
+  <h4>出牌</h4>
+  <span *ngFor="let item of option">
+    <div style="display: inline-block;">
+      <app-card  set="{{item}}"></app-card>
+      <button (click)="DoPick(item)">出牌</button>
+    </div>
+  </span>
+</div>
+
