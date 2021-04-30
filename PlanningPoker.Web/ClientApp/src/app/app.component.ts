@@ -1,22 +1,105 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, NgModule } from '@angular/core';
+import { ajax, AjaxResponse } from 'rxjs/ajax';
+import { map, catchError, tap } from 'rxjs/operators';
+import { interval, Observable, of, Subject } from 'rxjs';
+import { faLessThanEqual } from '@fortawesome/free-solid-svg-icons';
+
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.sass']
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
   title = 'ClientApp';
 
-  option = "0|0.5|1|2|3|5|8|131|20|40|100|coffee|infinity|?".split("|");
+  games?: Game[] ;
+  players?: Player[];
+
+  gameId?: string;
+  game?: Game;
+  userName: string = "測試人員";
+  player?: Player;
+
+  option = "0|0.5|1|2|3|5|8|13|20|40|100|coffee|infinity|?".split("|");
   pick = "";
 
-  player?: Player[] = [
-    {name: "小丹", color: "purple", pick: "wait"},
-    {name: "老胡", color: "green", pick: "wait"},
-    {name: "阿良", color: "blue", pick: "not-yet"},
-  ];
+  ngOnInit()
+  {
+    this.loadGame();
+  }
 
+  loadGame()
+  {
+    ajax({
+      url: "game",
+    })
+    .pipe(
+      tap(x => console.log(x))
+    )
+    .subscribe(d => {
+      this.games = d.response;
+    });
+  }
+
+  pickGame(gameId: string)
+  {
+    this.gameId = gameId;
+    ajax({
+      url: "game",
+    })
+    .pipe(
+      tap(x => console.log(x))
+    )
+    .subscribe(d => {
+      this.games = d.response;
+      this.game = this.games?.find(g => g.id == this.gameId);
+      this.players = this.game?.players;
+    });
+  }
+
+  dropGame(gameId: string)
+  {
+    if(this.gameId == gameId)
+      this.gameId = undefined;
+    ajax({
+      url: `game/${gameId}`,
+      method: "delete"
+    })
+    .pipe(
+      tap(x => console.log(x))
+    )
+    .subscribe(d => {
+      this.games = d.response;
+      this.game = this.games?.find(g => g.id == this.gameId);
+      this.players = this.game?.players;
+      this.player = this.game?.players?.find(p => p.name == this.userName);
+    });
+  }
+
+  addUser()
+  {
+    ajax({
+      url: `game/${this.game?.id}/user/${this.userName}`,
+      method: 'post',
+    })
+    .pipe(
+      tap(x => console.log(x)),
+    )
+    .subscribe(d => {
+      this.game = d.response;
+      this.players = this.game?.players;
+      this.player = this.game?.players?.find(p => p.name == this.userName);
+      this.loadGame();
+    });
+  }
+  isInGame()
+  {
+    if(!this.game) return false;
+    if(this.game.players.findIndex(p => p.name == this.userName) != -1)
+      return true;
+    return false;
+  }
   DoCancel()
   {
     this.pick = "";
@@ -29,7 +112,14 @@ export class AppComponent {
 
 interface Player
 {
+  id: string;
   name: string;
   color: string;
   pick: string
+}
+
+interface Game
+{
+  id: string
+  players: Player[];
 }

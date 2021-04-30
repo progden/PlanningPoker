@@ -27,7 +27,7 @@ export class CardComponent implements OnInit {
                    ["infinity", { value: "", icon: "assets/img/infinity.svg"}],
                    ["Q", { value: "?", icon: ""}],
                    ["?", { value: "?", icon: ""}],
-                   ["wait", { value: "", icon: "assets/img/pen.svg"}],
+                   ["not-yet", { value: "", icon: "assets/img/pen.svg"}],
                 ]);
 
   @Input()

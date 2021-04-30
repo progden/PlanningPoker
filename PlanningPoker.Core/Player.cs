@@ -7,8 +7,8 @@ namespace PlanningPoker.Core.Test
         public Player(string name) : this(Guid.NewGuid().ToString(), name)
         {
         }
-		
-        public string Pick {set; get;}
+
+        public string Pick { set; get; } = "not-yet";
         public string Color {set; get;}
     }
 }

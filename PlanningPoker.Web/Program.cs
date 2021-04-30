@@ -14,8 +14,8 @@ namespace PlanningPoker.Web
     {
         public static void Main(string[] args)
         {
-            Console.WriteLine(Assembly.GetEntryAssembly());
-            Assembly.GetEntryAssembly()?.GetTypes().Distinct().ToList().ForEach(t => Console.WriteLine(t.Name));
+            // Console.WriteLine(Assembly.GetEntryAssembly());
+            // Assembly.GetEntryAssembly()?.GetTypes().Distinct().ToList().ForEach(t => Console.WriteLine(t.Name));
             CreateHostBuilder(args).Build().Run();
         }
 

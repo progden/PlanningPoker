@@ -6,14 +6,28 @@ namespace PlanningPoker.Core.Test
 {
     public class Game
     {
+        protected List<string> Colors = new(){
+            "red", "blue", "green", "#FF8C00", 
+            "#678", "#234", "#A52A2A", "#8A2BE2",
+            "#7FFFD4", "#D2691E"
+        };
+
         public Game(string host)
         {
             Id = Guid.NewGuid().ToString();
-            AddPlayer(host);
+            var player = AddPlayer(host);
+
+            player.Color = GetFirstUnuseColor();
+
+        }
+
+        private string GetFirstUnuseColor()
+        {
+           return Colors.AsEnumerable().First(c => !Players.Select(p => p.Color).Contains(c));
         }
 
         public string Id { get; set; }
-        public List<Player> Players { get; set; } = new List<Player>();
+        public List<Player> Players { get; set; } = new ();
 
         public Player AddPlayer(string playerName)
         {
@@ -22,6 +36,7 @@ namespace PlanningPoker.Core.Test
             {
                 var player = new Player(playerName);
                 Players.Add(player);
+                player.Color = GetFirstUnuseColor();
                 existsPlayer = player;
             }
             return existsPlayer;
@@ -47,14 +62,9 @@ namespace PlanningPoker.Core.Test
         public Game CancelPoll(string playerId)
         {
             var player = Players.FirstOrDefault(p => p.Id == playerId);
-            player.Pick = null;
+            player.Pick = "not-yet";
             return this;
         }
 		
-        protected string[] _colors = new string[]{
-            "red", "blue", "green", "#FF8C00", 
-            "#678", "#234", "#A52A2A", "#8A2BE2",
-            "#7FFFD4", "#D2691E"
-        };
     }
 }
