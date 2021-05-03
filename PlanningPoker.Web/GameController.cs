@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.SignalR;
 using PlanningPoker.Core.Test;
 
 namespace PlanningPoker.Web
@@ -9,6 +10,12 @@ namespace PlanningPoker.Web
     public class GameController : Controller
     {
         private static List<Game> games = new();
+        private readonly IHubContext<GameHub> _hubContext;
+
+        public GameController(IHubContext<GameHub> hubContext)
+        {
+            _hubContext = hubContext;
+        }
 
         [HttpGet]
         [Route("~/game")]
@@ -24,6 +31,7 @@ namespace PlanningPoker.Web
             var game = new Game("Dennis");
             games.Add(game);
 
+            _hubContext.Clients.All.SendAsync("ReceiveGame", games);
             return Redirect($"~/game/{game.Id}");
         }
 
@@ -37,6 +45,7 @@ namespace PlanningPoker.Web
             {
                 game = new Game("Dennis");
                 games.Add(game);
+                _hubContext.Clients.All.SendAsync("ReceiveGame", games);
             }
 
             return Json(game);
@@ -51,6 +60,7 @@ namespace PlanningPoker.Web
             if (game != default(Game))
             {
                 games.Remove(game);
+                _hubContext.Clients.All.SendAsync("ReceiveGame", games);
             }
 
             return Json(games);
@@ -62,6 +72,8 @@ namespace PlanningPoker.Web
         {
             var game = games.FirstOrDefault(g => g.Id == gameId);
             game?.AddPlayer(userName);
+            
+            _hubContext.Clients.All.SendAsync("ReceiveGame", games);
             return Json(game);
         }
 
@@ -71,6 +83,7 @@ namespace PlanningPoker.Web
         {
             var game = games.FirstOrDefault(g => g.Id == gameId);
             game?.Poll(userId, pick);
+            _hubContext.Clients.All.SendAsync("ReceiveGame", games);
             return Json(game);
 
         }
@@ -81,8 +94,13 @@ namespace PlanningPoker.Web
         {
             var game = games.FirstOrDefault(g => g.Id == gameId);
             game?.CancelPoll(userId);
+
+            _hubContext.Clients.All.SendAsync("ReceiveGame", games);
             return Json(game);
         }
 
+        public class GameHub : Hub
+        {
+        }
     }
 }

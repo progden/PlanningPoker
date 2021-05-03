@@ -3,7 +3,7 @@ import { ajax, AjaxResponse } from 'rxjs/ajax';
 import { map, catchError, tap } from 'rxjs/operators';
 import { interval, Observable, of, Subject } from 'rxjs';
 import { faLessThanEqual } from '@fortawesome/free-solid-svg-icons';
-
+import { HubConnection, HubConnectionBuilder } from '@microsoft/signalr';
 
 @Component({
   selector: 'app-root',
@@ -11,6 +11,8 @@ import { faLessThanEqual } from '@fortawesome/free-solid-svg-icons';
   styleUrls: ['./app.component.sass']
 })
 export class AppComponent implements OnInit {
+  connection: HubConnection = new HubConnectionBuilder().withUrl("/game/hub").build();
+
   title = 'ClientApp';
 
   games?: Game[] ;
@@ -27,6 +29,17 @@ export class AppComponent implements OnInit {
   ngOnInit()
   {
     this.loadGame();
+    this.connection.on("ReceiveGame", (games: Game[]) => {
+      console.log("ReceiveGame");
+      console.log(games);
+      this.games = games;
+    });
+
+    this.connection.start().then(() => {
+      console.log("connection start!");
+    }).catch((err) => {
+      return console.error(err.toString());
+    });
   }
 
   loadGame()

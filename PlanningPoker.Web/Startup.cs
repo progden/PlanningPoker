@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Routing;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
@@ -26,6 +27,7 @@ namespace PlanningPoker.Web
             {
                 cfg.RootPath = "ClientApp";
             });
+            services.AddSignalR();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -50,6 +52,7 @@ namespace PlanningPoker.Web
             {
                 endpoints.MapDefaultControllerRoute();
                 endpoints.MapRazorPages();
+                endpoints.MapHub<GameController.GameHub>("/game/hub");
             });
             app.Use(next => context =>
             {
@@ -99,4 +102,5 @@ namespace PlanningPoker.Web
 
         }
     }
+
 }

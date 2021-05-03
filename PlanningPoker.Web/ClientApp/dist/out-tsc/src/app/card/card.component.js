@@ -19,7 +19,7 @@ let CardComponent = class CardComponent {
             ["infinity", { value: "", icon: "assets/img/infinity.svg" }],
             ["Q", { value: "?", icon: "" }],
             ["?", { value: "?", icon: "" }],
-            ["wait", { value: "", icon: "assets/img/pen.svg" }],
+            ["not-yet", { value: "", icon: "assets/img/pen.svg" }],
         ]);
         this.set = "custom";
         this.color = "red";

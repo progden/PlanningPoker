@@ -2,8 +2,10 @@ import { __decorate } from "tslib";
 import { Component } from '@angular/core';
 import { ajax } from 'rxjs/ajax';
 import { tap } from 'rxjs/operators';
+import { HubConnectionBuilder } from '@microsoft/signalr';
 let AppComponent = class AppComponent {
     constructor() {
+        this.connection = new HubConnectionBuilder().withUrl("/game/hub").build();
         this.title = 'ClientApp';
         this.userName = "測試人員";
         this.option = "0|0.5|1|2|3|5|8|13|20|40|100|coffee|infinity|?".split("|");
@@ -11,6 +13,16 @@ let AppComponent = class AppComponent {
     }
     ngOnInit() {
         this.loadGame();
+        this.connection.on("ReceiveGame", (games) => {
+            console.log("ReceiveGame");
+            console.log(games);
+            this.games = games;
+        });
+        this.connection.start().then(() => {
+            console.log("connection start!");
+        }).catch((err) => {
+            return console.error(err.toString());
+        });
     }
     loadGame() {
         ajax({
@@ -43,10 +55,11 @@ let AppComponent = class AppComponent {
         })
             .pipe(tap(x => console.log(x)))
             .subscribe(d => {
-            var _a, _b;
+            var _a, _b, _c, _d;
             this.games = d.response;
             this.game = (_a = this.games) === null || _a === void 0 ? void 0 : _a.find(g => g.id == this.gameId);
             this.players = (_b = this.game) === null || _b === void 0 ? void 0 : _b.players;
+            this.player = (_d = (_c = this.game) === null || _c === void 0 ? void 0 : _c.players) === null || _d === void 0 ? void 0 : _d.find(p => p.name == this.userName);
         });
     }
     addUser() {
@@ -57,9 +70,10 @@ let AppComponent = class AppComponent {
         })
             .pipe(tap(x => console.log(x)))
             .subscribe(d => {
-            var _a;
+            var _a, _b, _c;
             this.game = d.response;
             this.players = (_a = this.game) === null || _a === void 0 ? void 0 : _a.players;
+            this.player = (_c = (_b = this.game) === null || _b === void 0 ? void 0 : _b.players) === null || _c === void 0 ? void 0 : _c.find(p => p.name == this.userName);
             this.loadGame();
         });
     }
