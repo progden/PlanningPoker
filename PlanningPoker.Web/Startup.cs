@@ -43,7 +43,6 @@ namespace PlanningPoker.Web
             else
             {
                 app.UseExceptionHandler("/Error");
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
 
@@ -52,23 +51,18 @@ namespace PlanningPoker.Web
 
             // env.WebRootFileProvider.GetDirectoryContents()
             app.UseRouting();
-            // app.UseEndpoints(endpoints =>
-            // {
-            // });
-            app.UseSpa(spa =>
-            {
-                Console.WriteLine(spa.Options.SourcePath);
-                // spa.Options.DefaultPage = "/index.html";
-                if (env.IsDevelopment())
-                {
-                    spa.UseProxyToSpaDevelopmentServer("http://localhost:4200");
-                }
-            });
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapDefaultControllerRoute();
                 endpoints.MapRazorPages();
                 endpoints.MapHub<GameController.GameHub>("/game/hub");
+            });
+            app.UseSpa(spa => { 
+                Console.WriteLine($"spa.Options.SourcePath: {spa.Options.SourcePath}");
+                if (env.IsDevelopment())
+                {
+                    spa.UseProxyToSpaDevelopmentServer("http://localhost:4200");
+                }
             });
             app.Use(next => async context =>
             {
