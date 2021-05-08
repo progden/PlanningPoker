@@ -4,6 +4,6 @@
     <DebuggerFlavor>ProjectDebugger</DebuggerFlavor>
   </PropertyGroup>
   <PropertyGroup>
-    <ActiveDebugProfile>PlanningPoker.Web</ActiveDebugProfile>
+    <ActiveDebugProfile>PlanningPoker.Web-Prod</ActiveDebugProfile>
   </PropertyGroup>
 </Project>

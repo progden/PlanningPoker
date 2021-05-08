@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Mime;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -22,10 +23,9 @@ namespace PlanningPoker.Web
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc();
-            services.AddRazorPages();
             services.AddSpaStaticFiles(cfg =>
             {
-                cfg.RootPath = "ClientApp";
+                cfg.RootPath = "ClientApp/dist/ClientApp";
             });
             services.AddSignalR();
         }
@@ -33,6 +33,9 @@ namespace PlanningPoker.Web
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            Console.WriteLine($"EnvironmentName: {env.EnvironmentName}");
+            Console.WriteLine($"ContentRootPath: {env.ContentRootPath}");
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -47,56 +50,30 @@ namespace PlanningPoker.Web
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
+            // env.WebRootFileProvider.GetDirectoryContents()
             app.UseRouting();
+            // app.UseEndpoints(endpoints =>
+            // {
+            // });
+            app.UseSpa(spa =>
+            {
+                Console.WriteLine(spa.Options.SourcePath);
+                // spa.Options.DefaultPage = "/index.html";
+                if (env.IsDevelopment())
+                {
+                    spa.UseProxyToSpaDevelopmentServer("http://localhost:4200");
+                }
+            });
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapDefaultControllerRoute();
                 endpoints.MapRazorPages();
                 endpoints.MapHub<GameController.GameHub>("/game/hub");
             });
-            app.Use(next => context =>
-            {
-                var meta = context.GetEndpoint()?.Metadata;
-
-                ControllerActionDescriptor actionDescriptor =
-                    (ControllerActionDescriptor) meta?.SingleOrDefault(o => o is ControllerActionDescriptor);
-
-                string text = actionDescriptor?.AttributeRouteInfo?.Template;
-                string text2 = actionDescriptor?.AttributeRouteInfo?.Name;
-                string actionName = actionDescriptor?.ActionName;
-                string controllerName = actionDescriptor?.ControllerName;
-                int? num = actionDescriptor?.AttributeRouteInfo?.Order;
-                string method = context.Request.Method;
-                PathString path = context.Request.Path;
-                string text3 = string.Empty;
-                if (context.GetRouteData().Values.TryGetValue("area", out var value))
-                {
-                    text3 = "area:" + value?.ToString();
-                }
-
-                string text4 = ((text == null) ? "" : ("Template = " + text));
-                string text6 = ((!num.HasValue) ? "" : $"Order = {num}");
-                string text7 = ((method == "GET") ? "" : (method ?? ""));
-                Console.WriteLine($"{text7} {path} {text3} {text6} {text4} " + controllerName + "." +
-                                  actionName + " " + text2 );
-
-                return next(context);
-                // return Task.CompletedTask;
-            });
-
-            app.UseSpa(spa =>
-            {
-                spa.Options.SourcePath = "ClientApp";
-                spa.UseProxyToSpaDevelopmentServer("http://localhost:4200");
-                // if (env.IsDevelopment())
-                // {
-                //     spa.UseProxyToSpaDevelopmentServer("http://localhost:4200");
-                // }
-            });
             app.Use(next => async context =>
             {
                 var url = context.Request.GetDisplayUrl();
-                await context.Response.WriteAsync($"url: {url}");
+                Console.WriteLine($"url: {url}");
                 await next(context);
             });
 

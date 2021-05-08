@@ -21,23 +21,39 @@ namespace PlanningPoker.Web
         [Route("~/game")]
         public JsonResult ListGame()
         {
+            _hubContext.Clients.All.SendAsync("ReceiveGame", games);
             return Json(games);
         }
         
         [HttpPost]
         [Route("~/game")]
-        public IActionResult Index()
+        public IActionResult CreateGame()
         {
-            var game = new Game("Dennis");
-            games.Add(game);
+            return CreateGame("Dennis");
+        }
 
-            _hubContext.Clients.All.SendAsync("ReceiveGame", games);
+        [HttpPost]
+        [Route("~/game/{userName}")]
+        public IActionResult CreateGame(string userName)
+        {
+            Game game = null;
+            if (games.Count <= 10)
+            {
+                game = new Game(userName);
+                games.Add(game);
+
+                _hubContext.Clients.All.SendAsync("ReceiveGame", games);
+            }
+            else
+            {
+                game = games.First();
+            }
             return Redirect($"~/game/{game.Id}");
         }
 
         [HttpGet]
         [Route("~/game/{id?}")]
-        public JsonResult Index(string id)
+        public JsonResult GetGame(string id)
         {
             var game = games.FirstOrDefault(g => g.Id == id);
 
@@ -73,6 +89,17 @@ namespace PlanningPoker.Web
             var game = games.FirstOrDefault(g => g.Id == gameId);
             game?.AddPlayer(userName);
             
+            _hubContext.Clients.All.SendAsync("ReceiveGame", games);
+            return Json(game);
+        }
+
+        [HttpDelete]
+        [Route("~/game/{gameId}/user/{userId}")]
+        public JsonResult KickUser(string gameId, string userId)
+        {
+            var game = games.FirstOrDefault(g => g.Id == gameId);
+            var user = game?.RemoveUser(userId);
+
             _hubContext.Clients.All.SendAsync("ReceiveGame", games);
             return Json(game);
         }

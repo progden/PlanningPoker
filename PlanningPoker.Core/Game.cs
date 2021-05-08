@@ -32,7 +32,8 @@ namespace PlanningPoker.Core.Test
         public Player AddPlayer(string playerName)
         {
             var existsPlayer = Players.FirstOrDefault(p => p.Name == playerName);
-            if (existsPlayer == default)
+            // 沒有現有的使用者
+            if (existsPlayer == default(Player))
             {
                 var player = new Player(playerName);
                 Players.Add(player);
