@@ -1,6 +1,6 @@
 using System;
 
-namespace PlanningPoker.Core.Test
+namespace PlanningPoker.Core
 {
     public record Player(string Id, string Name)
     {
