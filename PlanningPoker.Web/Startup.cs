@@ -32,7 +32,7 @@ namespace PlanningPoker.Web
             services.AddControllersWithViews();
             services.AddSpaStaticFiles(cfg =>
             {
-                cfg.RootPath = "ClientApp/dist/ClientApp";
+                cfg.RootPath = "ClientApp/dist";
             });
             services.AddSignalR();
         }
