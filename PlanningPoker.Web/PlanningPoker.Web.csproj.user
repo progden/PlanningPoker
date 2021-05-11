@@ -5,6 +5,6 @@
   </PropertyGroup>
   <PropertyGroup>
     <ActiveDebugProfile>PlanningPoker.Web-Prod</ActiveDebugProfile>
-    <NameOfLastUsedPublishProfile>FolderProfile</NameOfLastUsedPublishProfile>
+    <NameOfLastUsedPublishProfile>master_planning-poker-progden</NameOfLastUsedPublishProfile>
   </PropertyGroup>
 </Project>
