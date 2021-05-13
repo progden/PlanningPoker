@@ -5,6 +5,6 @@ https://go.microsoft.com/fwlink/?LinkID=208121.
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <_PublishTargetUrl>C:\site-planning-poker</_PublishTargetUrl>
-    <History>True|2021-05-10T17:18:17.0263801Z;True|2021-05-11T01:15:46.3949077+08:00;True|2021-05-11T01:10:39.7044499+08:00;True|2021-05-11T00:41:10.0235579+08:00;</History>
+    <History>True|2021-05-13T13:07:08.8334592Z;True|2021-05-11T01:18:17.0263801+08:00;True|2021-05-11T01:15:46.3949077+08:00;True|2021-05-11T01:10:39.7044499+08:00;True|2021-05-11T00:41:10.0235579+08:00;</History>
   </PropertyGroup>
 </Project>
